@@ -1,24 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+interface IERC20 {
+function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+function transfer(address recipient, uint256 amount) external returns (bool);
+function balanceOf(address account) external view returns (uint256);
+function approve(address spender, uint256 amount) external returns (bool);
+}
+
 contract VsToken {
 
-    // Define the supply of FunToken: 1,000,000 
+  
  
     event Transfer(address from, address to, uint256 value);
     event Approval(address from, address to, uint256 value);
+    event TokenPurchased(address indexed buyer, uint256 value, uint256 tokens);
+
     mapping(address account => uint256) private _balances;
 
     mapping(address account => mapping(address spender => uint256)) private _allowances;
 
     uint256 private _totalSupply = 1000000 * (10**18);
-
+ 
     string private _name = "VsToken";
     string private _symbol = "VS";
+    IERC20 public token;
 
     // Constructor will be called on contract creation
     constructor() {
-        _mint(msg.sender, _totalSupply);
+        _mint(msg.sender, _totalSupply / 2);
+        _mint(address(this), _totalSupply / 2);
     }
 
     function name() public view virtual returns (string memory) {
@@ -62,10 +73,10 @@ contract VsToken {
 
     function _transfer(address from, address to, uint256 value) internal {
         if (from == address(0)) {
-            revert (address(0));
+            revert ("from zero address");
         }
         if (to == address(0)) {
-            revert (address(0));
+            revert ("to zero address");
         }
         _update(from, to, value);
     }
@@ -77,7 +88,7 @@ contract VsToken {
         } else {
             uint256 fromBalance = _balances[from];
             if (fromBalance < value) {
-                revert (from, fromBalance, value);
+                revert ("not sufficient balance");
             }
             unchecked {
                 // Overflow not possible: value <= fromBalance <= totalSupply.
@@ -102,7 +113,7 @@ contract VsToken {
 
     function _mint(address account, uint256 value) internal {
         if (account == address(0)) {
-            revert (address(0));
+            revert ("minto to zero address");
         }
         _update(address(0), account, value);
     }
@@ -111,12 +122,12 @@ contract VsToken {
         _approve(owner, spender, value, true);
     }
 
-        function _approve(address owner, address spender, uint256 value, bool emitEvent) internal virtual {
+    function _approve(address owner, address spender, uint256 value, bool emitEvent) internal virtual {
         if (owner == address(0)) {
-            revert (address(0));
+            revert ("zero owner address");
         }
         if (spender == address(0)) {
-            revert (address(0));
+            revert ("spender from zero address not allowed");
         }
         _allowances[owner][spender] = value;
         if (emitEvent) {
@@ -124,15 +135,16 @@ contract VsToken {
         }
     }
 
-        function _spendAllowance(address owner, address spender, uint256 value) internal virtual {
+    function _spendAllowance(address owner, address spender, uint256 value) internal virtual {
         uint256 currentAllowance = allowance(owner, spender);
         if (currentAllowance != type(uint256).max) {
             if (currentAllowance < value) {
-                revert (spender, currentAllowance, value);
+                revert ("not enough allowance");
             }
             unchecked {
                 _approve(owner, spender, currentAllowance - value, false);
             }
         }
     }
+
 }
