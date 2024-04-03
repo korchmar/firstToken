@@ -20,11 +20,11 @@ uint256 public tokenPrice;
 
      function buyTokens(uint256 _numberOfTokens) public payable {
 
-        require(msg.value == _multiply(_numberOfTokens, tokenPrice));
+        require(msg.value == _multiply(_numberOfTokens, tokenPrice), "msg.value not correct");
 
-        require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
+        require(tokenContract.balanceOf(address(this)) >= _numberOfTokens, "not enough tokens on contract balance");
         
-        require(tokenContract.transfer(msg.sender, _numberOfTokens));
+        require(tokenContract.transfer(msg.sender, _numberOfTokens), "transaction not completed");
 
         tokensSold += _numberOfTokens;
          emit Sell(msg.sender, _numberOfTokens);

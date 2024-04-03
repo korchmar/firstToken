@@ -9,8 +9,6 @@ function approve(address spender, uint256 amount) external returns (bool);
 }
 
 contract VsToken {
-
-  
  
     event Transfer(address from, address to, uint256 value);
     event Approval(address from, address to, uint256 value);
@@ -28,8 +26,8 @@ contract VsToken {
 
     // Constructor will be called on contract creation
     constructor() {
-        _mint(msg.sender, _totalSupply / 2);
-        _mint(address(this), _totalSupply / 2);
+     //   _mint(msg.sender, _totalSupply);
+        _mint(address(this), _totalSupply);
     }
 
     function name() public view virtual returns (string memory) {
