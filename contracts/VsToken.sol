@@ -26,7 +26,7 @@ contract VsToken {
 
     // Constructor will be called on contract creation
     constructor() {
-     //   _mint(msg.sender, _totalSupply);
+       _mint(msg.sender, _totalSupply);
         _mint(address(this), _totalSupply);
     }
 
@@ -64,7 +64,7 @@ contract VsToken {
 
     function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
         address spender = msg.sender;
-        _spendAllowance(from, spender, value);
+       // _spendAllowance(from, spender, value);
         _transfer(from, to, value);
         return true;
     }

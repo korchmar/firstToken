@@ -7,7 +7,7 @@ describe("VsToken", function () {
      const vsToken = await hre.ethers.deployContract("VsToken");
      expect(await vsToken.name()).to.equal("VsToken");
      expect(await vsToken.symbol()).to.equal("VS");
- //    expect(await vsToken.totalSupply()).to.equal(1000000 * (10**18));
+ //  expect(await vsToken.totalSupply()).to.equal(1000000 * (10**18));
      console.log(await vsToken.getAddress())
      expect(await vsToken.balanceOf( await vsToken.getAddress())).to.equal(1000);
     });

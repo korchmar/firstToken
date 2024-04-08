@@ -4,7 +4,9 @@ pragma solidity ^0.8.24;
 import "./VsToken.sol";
 
 contract VsTokenSale {
-address admin;
+
+address owner;
+
 VsToken public tokenContract;
 uint256 public tokensSold;
 
@@ -13,7 +15,7 @@ uint256 public tokenPrice;
      event Sell(address _buyer, uint256 _amount);
 
     constructor( VsToken _tokenContract, uint256 _tokenPrice) {
-        admin = msg.sender;
+        owner = msg.sender;
         tokenContract = _tokenContract;
         tokenPrice = _tokenPrice;
     }
@@ -22,9 +24,9 @@ uint256 public tokenPrice;
 
         require(msg.value == _multiply(_numberOfTokens, tokenPrice), "msg.value not correct");
 
-        require(tokenContract.balanceOf(address(this)) >= _numberOfTokens, "not enough tokens on contract balance");
+        require(tokenContract.balanceOf(address(tokenContract)) >= _numberOfTokens, "not enough tokens on contract balance");
         
-        require(tokenContract.transfer(msg.sender, _numberOfTokens), "transaction not completed");
+        require(tokenContract.transferFrom(address(tokenContract), msg.sender, _numberOfTokens), "transaction not completed");
 
         tokensSold += _numberOfTokens;
          emit Sell(msg.sender, _numberOfTokens);
@@ -32,15 +34,5 @@ uint256 public tokenPrice;
 
      function _multiply(uint x, uint y) internal pure returns(uint z){
         require(y == 0 || (z = x * y) / y == x);
-    }
-
-    function endSale() public {
-
-        require(msg.sender == admin, 'Only Admin can end the sale');
-
-        require(tokenContract.transfer(admin, tokenContract.balanceOf(address(this))));
-
-        selfdestruct(payable(admin));
-
     }
 }
